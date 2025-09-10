@@ -1,0 +1,43 @@
+name: SonarCloud Security Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches:
+      - main
+
+jobs:
+  sonarcloud:
+    name: SonarCloud Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # full history for analysis
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@v2
+        with:
+          args: >
+            -Dsonar.organization=passera
+            -Dsonar.projectKey=botian123123_sonarQubeTest
+            -Dsonar.token=2bf1a4e59b3b19dd3783294c27a2cee75ebb48c3
+
+      - name: Wait for Analysis Report
+        run: sleep 20
+
+      - name: Check for High Security Issues
+        run: |
+          count=$(curl -s -u "2bf1a4e59b3b19dd3783294c27a2cee75ebb48c3:" \
+            "https://sonarcloud.io/api/issues/search?componentKeys=sonarQubeTest&types=VULNERABILITY&severities=CRITICAL,BLOCKER" \
+            | jq '.total')
+          echo "Found $count critical/blocker vulnerabilities"
+          if [ "$count" -gt 0 ]; then
+            echo "❌ Security issues detected: $count"
+            exit 1
+          else
+            echo "✅ No high severity security issues found."
+          fi
