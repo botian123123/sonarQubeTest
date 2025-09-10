@@ -24,14 +24,14 @@ jobs:
           args: >
             -Dsonar.organization=passera
             -Dsonar.projectKey=botian123123_sonarQubeTest
-            -Dsonar.token=2bf1a4e59b3b19dd3783294c27a2cee75ebb48c3
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
       - name: Wait for Analysis Report
         run: sleep 20
 
       - name: Check for High Security Issues
         run: |
-          count=$(curl -s -u "2bf1a4e59b3b19dd3783294c27a2cee75ebb48c3:" \
+          count=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
             "https://sonarcloud.io/api/issues/search?componentKeys=sonarQubeTest&types=VULNERABILITY&severities=CRITICAL,BLOCKER" \
             | jq '.total')
           echo "Found $count critical/blocker vulnerabilities"
