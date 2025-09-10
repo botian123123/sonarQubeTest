@@ -24,7 +24,7 @@ jobs:
 
       # 4️⃣ SonarCloud Scan
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@6f0d8c1a1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p
+        uses: SonarSource/sonarcloud-github-action@v2
         with:
           args: >
             -Dsonar.organization=passera
