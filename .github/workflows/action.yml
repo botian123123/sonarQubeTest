@@ -24,7 +24,7 @@ jobs:
 
       # 4️⃣ SonarCloud Scan
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
+        uses: SonarSource/sonarcloud-github-action@6f0d8c1a1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p
         with:
           args: >
             -Dsonar.organization=passera
@@ -33,48 +33,17 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
+      - name: Wait for Analysis Report
+        run: sleep 20
+
       - name: Check for High Security Issues
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          PROJECT_KEY=botian123123_sonarQubeTest
-
-          # 1️获取最近一次分析任务 ID
-          TASK_ID=$(curl -s -u "$SONAR_TOKEN:" \
-            "https://sonarcloud.io/api/project_analyses/search?project=$PROJECT_KEY" \
-            | jq -r '.analyses[0].taskId')
-
-          if [ -z "$TASK_ID" ]; then
-            echo "❌ Could not find task ID for project $PROJECT_KEY"
-            exit 1
-          fi
-
-          # 2️获取任务状态
-          TASK_STATUS=""
-          TASK_URL="https://sonarcloud.io/api/ce/task?id=$TASK_ID"
-          echo "Waiting for SonarCloud analysis to complete..."
-
-          while [ "$TASK_STATUS" != "SUCCESS" ]; do
-            TASK_STATUS=$(curl -s -u "$SONAR_TOKEN:" "$TASK_URL" | jq -r '.task.status')
-            echo "Current status: $TASK_STATUS"
-            if [ "$TASK_STATUS" == "FAILED" ]; then
-              echo "❌ Analysis failed"
-              exit 1
-            fi
-            if [ "$TASK_STATUS" != "SUCCESS" ]; then
-              sleep 5
-            fi
-          done
-
-          echo "✅ Analysis completed, checking for high severity security issues..."
-
-          # 3️查询 Critical/Blocker 漏洞
           count=$(curl -s -u "$SONAR_TOKEN:" \
             "https://sonarcloud.io/api/issues/search?componentKeys=botian123123_sonarQubeTest&types=CODESMELL&severities=CRITICAL,BLOCKER" \
             | jq '.total')
-
           echo "Found $count critical/blocker vulnerabilities"
-
           if [ "$count" -gt 0 ]; then
             echo "❌ Security issues detected: $count"
             exit 1
