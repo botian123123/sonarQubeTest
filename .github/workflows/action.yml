@@ -24,7 +24,8 @@ jobs:
           args: >
             -Dsonar.organization=passera
             -Dsonar.projectKey=botian123123_sonarQubeTest
-            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Wait for Analysis Report
         run: sleep 20
