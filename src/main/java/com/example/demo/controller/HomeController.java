@@ -48,4 +48,13 @@ class ApiController {
         info.put("os.name", System.getProperty("os.name"));
         return info;
     }
+
+    @GetMapping("/api/welcome")
+    public Map<String, Object> apiWelcome(@RequestParam(name="name", required=true) String name) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Welcome, " + name + "!");
+        response.put("timestamp", LocalDateTime.now());
+        response.put("status","success");
+        return response;
+    }
 }
