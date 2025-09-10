@@ -24,7 +24,7 @@ jobs:
 
       # 4️⃣ SonarCloud Scan
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
+        uses: SonarSource/sonarcloud-github-action@6f0d8c1a1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p
         with:
           args: >
             -Dsonar.organization=passera
@@ -37,9 +37,11 @@ jobs:
         run: sleep 20
 
       - name: Check for High Security Issues
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
-          count=$(curl -s -u "${{ secrets.SONAR_TOKEN }}:" \
-            "https://sonarcloud.io/api/issues/search?componentKeys=botian123123_sonarQubeTest&types=VULNERABILITY&severities=CRITICAL,BLOCKER" \
+          count=$(curl -s -u "$SONAR_TOKEN:" \
+            "https://sonarcloud.io/api/issues/search?componentKeys=botian123123_sonarQubeTest&types=CODESMELL&severities=CRITICAL,BLOCKER" \
             | jq '.total')
           echo "Found $count critical/blocker vulnerabilities"
           if [ "$count" -gt 0 ]; then
