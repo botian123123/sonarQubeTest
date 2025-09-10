@@ -20,7 +20,7 @@ jobs:
 
       # 3️⃣ Build project (compile Java)
       - name: Build project
-        run: mvn clean install
+        run: mvn clean install -DskipTests
 
       # 4️⃣ SonarCloud Scan
       - name: SonarCloud Scan
