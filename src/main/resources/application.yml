@@ -1,0 +1,21 @@
+﻿# 应用程序配置
+spring.application.name=springboot-demo
+
+# 服务器配置
+server.port=8080
+server.servlet.context-path=/
+
+# Thymeleaf配置
+spring.thymeleaf.cache=false
+spring.thymeleaf.encoding=UTF-8
+spring.thymeleaf.mode=HTML
+spring.thymeleaf.prefix=classpath:/templates/
+spring.thymeleaf.suffix=.html
+
+# 日志配置
+logging.level.com.example.demo=INFO
+logging.level.org.springframework.web=DEBUG
+
+# 开发工具配置
+spring.devtools.restart.enabled=true
+spring.devtools.livereload.enabled=true
