@@ -41,7 +41,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           count=$(curl -s -u "$SONAR_TOKEN:" \
-            "https://sonarcloud.io/api/issues/search?componentKeys=botian123123_sonarQubeTest&types=CODES_MELL&severities=CRITICAL,BLOCKER" \
+            "https://sonarcloud.io/api/issues/search?componentKeys=botian123123_sonarQubeTest&types=CODE_SEMLL&severities=CRITICAL,BLOCKER" \
             | jq '.total')
           echo "Found $count critical/blocker vulnerabilities"
           if [ "$count" -gt 0 ]; then
