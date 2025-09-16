@@ -39,10 +39,10 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          MAVEN_OPTS: "-Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true -Djavax.net.ssl.trustStoreType=Windows-ROOT"
+          MAVEN_OPTS: "-Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true"
         run: |
           mvn -B verify -DskipTests \
-            org.sonarsource.scanner.maven:sonar-maven-plugin:5.2.0.4988:sonar \
+            org.sonarsource.scanner.maven:sonar-maven-plugin:3.10.0.2594:sonar \
             -Dsonar.projectKey=cybersource_handler \
             -Dsonar.projectName='cybersource_handler'
       # - name: Wait for Analysis Report
