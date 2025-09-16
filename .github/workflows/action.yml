@@ -13,6 +13,22 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Import SonarQube certificate
+        run: |
+          # 使用 printf 保留换行
+          printf "%s\n" "$SONAR_CERT" > sonar.crt
+
+          # 导入到 Java cacerts
+          sudo keytool -importcert -noprompt \
+            -trustcacerts \
+            -keystore "$JAVA_HOME/lib/security/cacerts" \
+            -storepass changeit \
+            -file sonar.crt \
+            -alias sonar-cert
+
+      - name: Debug SonarQube connectivity
+        run: curl -vk ${{ secrets.SONAR_HOST_URL }}
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
@@ -34,16 +50,6 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Import SonarQube certificate
-        run: |
-          echo "$SONAR_CERT" > sonar.crt
-          sudo keytool -importcert -noprompt \
-            -keystore $JAVA_HOME/lib/security/cacerts \
-            -storepass changeit \
-            -file sonar.crt \
-            -alias sonar-cert
-      - name: Debug SonarQube connectivity
-        run: curl -vk ${{ secrets.SONAR_HOST_URL }}
 
       - name: Build and analyze (ignore certs)
         env:
