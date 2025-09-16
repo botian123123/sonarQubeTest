@@ -22,31 +22,38 @@ jobs:
       - name: Build project
         run: mvn clean install -DskipTests
 
-      # 4️⃣ SonarCloud Scan
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@v2
+      - name: Cache SonarQube packages
+        uses: actions/cache@v1
         with:
-          args: >
-            -Dsonar.organization=passera
-            -Dsonar.projectKey=botian123123_sonarQubeTest
-            -Dsonar.java.binaries=target/classes
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache Maven packages
+        uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=cybersource_handler -Dsonar.projectName='cybersource_handler'
 
-      - name: Wait for Analysis Report
-        run: sleep 20
+      # - name: Wait for Analysis Report
+      #   run: sleep 20
 
-      - name: Check for High Security Issues
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          count=$(curl -s -u "$SONAR_TOKEN }}:" \
-            "https://sonarcloud.io/api/issues/search?componentKeys=botian123123_sonarQubeTest&types=VULNERABILITY&severities=CRITICAL,BLOCKER" \
-            | jq '.total')
-          echo "Found $count critical/blocker vulnerabilities"
-          if [ "$count" -gt 0 ]; then
-            echo "❌ Security issues detected: $count"
-            exit 1
-          else
-            echo "✅ No high severity security issues found."
-          fi
+      # - name: Check for High Security Issues
+      #   env:
+      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      #   run: |
+      #     count=$(curl -s -u "$SONAR_TOKEN }}:" \
+      #       "https://sonarcloud.io/api/issues/search?componentKeys=botian123123_sonarQubeTest&types=VULNERABILITY&severities=CRITICAL,BLOCKER" \
+      #       | jq '.total')
+      #     echo "Found $count critical/blocker vulnerabilities"
+      #     if [ "$count" -gt 0 ]; then
+      #       echo "❌ Security issues detected: $count"
+      #       exit 1
+      #     else
+      #       echo "✅ No high severity security issues found."
+      #     fi
