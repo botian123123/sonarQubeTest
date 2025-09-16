@@ -15,16 +15,11 @@ jobs:
     steps:
       - name: Import SonarQube certificate
         run: |
-          # 使用 printf 保留换行
-          printf "%s\n" "$SONAR_CERT" > sonar.crt
-
-          # 导入到 Java cacerts
-          sudo keytool -importcert -noprompt \
-            -trustcacerts \
-            -keystore "$JAVA_HOME/lib/security/cacerts" \
-            -storepass changeit \
-            -file sonar.crt \
-            -alias sonar-cert
+          echo "Adding custom root certificate to java certificate store"
+          rm -f /tmp/tmpcert.pem
+          echo "${{ secrets.SONAR_CERT }}" > /tmp/tmpcert.pem
+          sudo keytool -keystore ${JAVA_HOME}/lib/security/cacerts -storepass changeit -noprompt -trustcacerts -importcert \
+          -alias pax-sonarqube -file /tmp/tmpcert.pem -storetype pkcs12
 
       - name: Debug SonarQube connectivity
         run: curl -vk ${{ secrets.SONAR_HOST_URL }}
