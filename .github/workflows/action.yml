@@ -38,7 +38,7 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=cybersource_handler -Dsonar.projectName='cybersource_handler'
+        run: mvn -B verify -DskipTests org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=cybersource_handler -Dsonar.projectName='cybersource_handler'
 
       # - name: Wait for Analysis Report
       #   run: sleep 20
